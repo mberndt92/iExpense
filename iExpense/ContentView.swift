@@ -13,6 +13,10 @@ struct ContentView: View {
     
     @State private var showingAddExpense = false
     
+    var currencyIdentifier: String {
+        return Locale.current.currency?.identifier ?? "USD"
+    }
+    
     var body: some View {
         NavigationView {
             List {
@@ -28,9 +32,10 @@ struct ContentView: View {
                         Text(
                             item.amount,
                             format: .currency(
-                                code: "USD"
+                                code: currencyIdentifier
                             )
                         )
+                        .foregroundColor(amountStyle(amount: item.amount))
                     }
                 }
                 .onDelete(perform: removeItems)
@@ -51,6 +56,14 @@ struct ContentView: View {
     
     func removeItems(at offsets: IndexSet) {
         expenses.items.remove(atOffsets: offsets)
+    }
+    
+    private func amountStyle(amount: Double) -> Color {
+        switch amount {
+        case 0..<10: return Color.green;
+        case 10..<100: return Color.yellow;
+        default: return Color.red;
+        }
     }
 }
 

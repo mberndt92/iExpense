@@ -25,6 +25,15 @@ struct ContentView: View {
         return expenses.items.filter({ $0.type == .business })
     }
     
+    func formatted(_ number: Double) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .spellOut
+        formatter.currencySymbol = currencyIdentifier
+        formatter.maximumFractionDigits = 2
+        
+        return formatter.string(from: number as NSNumber) ?? ""
+    }
+    
     var body: some View {
         NavigationView {
             List {
@@ -46,6 +55,9 @@ struct ContentView: View {
                             )
                             .foregroundColor(amountStyle(amount: item.amount))
                         }
+                        .accessibilityElement()
+                        .accessibilityLabel("\(item.name) \( formatted(item.amount)) \(currencyIdentifier)")
+                        .accessibilityHint("\(item.type.rawValue)")
                     }
                     .onDelete {
                         self.removeItems(at: $0, section: 0)
@@ -70,30 +82,14 @@ struct ContentView: View {
                             )
                             .foregroundColor(amountStyle(amount: item.amount))
                         }
+                        .accessibilityElement()
+                        .accessibilityLabel("\(item.name) \(formatted(item.amount)) \(currencyIdentifier)")
+                        .accessibilityHint("\(item.type.rawValue)")
                     }
                     .onDelete {
                         self.removeItems(at: $0, section: 1)
                     }
                 }
-//                ForEach(expenses.items) { item in
-//                    HStack {
-//                        VStack(alignment: .leading) {
-//                            Text(item.name)
-//                            Text(item.type.rawValue)
-//                        }
-//
-//                        Spacer()
-//
-//                        Text(
-//                            item.amount,
-//                            format: .currency(
-//                                code: currencyIdentifier
-//                            )
-//                        )
-//                        .foregroundColor(amountStyle(amount: item.amount))
-//                    }
-//                }
-//                .onDelete(perform: removeItems)
             }
             .navigationTitle("iExpense")
             .toolbar {
